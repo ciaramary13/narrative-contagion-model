@@ -118,19 +118,23 @@ if "results" not in st.session_state:
 df, sir, phases, regimes, mispricing, used_ticker = st.session_state["results"]
 
 # Metrics
-current_phase     = phases[-1]
-current_i         = sir["I"].iloc[-1]
+current_phase      = phases[-1]
+current_i          = sir["I"].iloc[-1]
 current_mispricing = mispricing.iloc[-1]
-current_regime    = REGIME_LABELS.get(int(regimes[-1]), "Unknown") if len(regimes) else "—"
-peak_idx          = sir["I"].idxmax()
-days_since_peak   = (df.index[-1] - peak_idx).days
+current_regime     = REGIME_LABELS.get(int(regimes[-1]), "Unknown") if len(regimes) else "—"
+peak_idx           = sir["I"].idxmax()
+days_since_peak    = (df.index[-1] - peak_idx).days
+current_r0         = sir["r0"].iloc[-1]
+r0_delta           = sir["r0"].iloc[-1] - sir["r0"].iloc[-2] if len(sir) > 1 else 0.0
 
-m1, m2, m3, m4, m5 = st.columns(5)
+m1, m2, m3, m4, m5, m6 = st.columns(6)
 m1.metric("Ticker",            used_ticker)
 m2.metric("Narrative Phase",   PHASE_LABELS.get(current_phase, current_phase))
 m3.metric("Contagion (I)",     f"{current_i:.1%}")
 m4.metric("Mispricing Score",  f"{current_mispricing:+.2f}")
 m5.metric("Market Regime",     current_regime)
+m6.metric("R₀(t)",             f"{current_r0:.2f}", delta=f"{r0_delta:+.3f}",
+          help="Basic reproduction number. R₀ > 1: narrative spreading. R₀ < 1: narrative declining.")
 
 # Main chart
 fig = make_dashboard(df, sir, phases, regimes, mispricing)

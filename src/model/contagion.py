@@ -62,5 +62,6 @@ def run(
     result["beta"]  = beta_series.values
     result["gamma"] = gamma_series.values
     result["dI"]    = np.gradient(I)
+    result["r0"]    = beta_series.values / gamma_series.values
 
     return result

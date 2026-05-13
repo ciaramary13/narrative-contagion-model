@@ -15,16 +15,17 @@ def make_dashboard(
     mispricing: pd.Series,
 ) -> go.Figure:
     fig = make_subplots(
-        rows=4, cols=1,
+        rows=5, cols=1,
         shared_xaxes=True,
-        vertical_spacing=0.05,
+        vertical_spacing=0.04,
         subplot_titles=[
             "Price & Narrative Phase",
             "SIR Contagion Dynamics",
             "Mispricing Score",
+            "Basic Reproduction Number R₀(t) = β/γ",
             "Market Regime (HMM)",
         ],
-        row_heights=[0.35, 0.25, 0.20, 0.20],
+        row_heights=[0.30, 0.20, 0.17, 0.17, 0.16],
     )
 
     index = df.index
@@ -61,10 +62,28 @@ def make_dashboard(
     for threshold, color in [(0.5, "rgba(244,67,54,0.5)"), (-0.5, "rgba(33,150,243,0.5)")]:
         fig.add_hline(y=threshold, line_dash="dot", line_color=color, row=3, col=1)
 
-    _add_regime_bands(fig, index, regimes, row=4)
+    # R₀(t) = β(t)/γ(t): narrative spreading when > 1, declining when < 1
+    fig.add_trace(go.Scatter(
+        x=index,
+        y=sir["r0"],
+        line=dict(color="#FF6F00", width=1.5),
+        fill="tozeroy",
+        fillcolor="rgba(255, 111, 0, 0.08)",
+        name="R₀(t)",
+        showlegend=False,
+    ), row=4, col=1)
+    fig.add_hline(
+        y=1.0,
+        line_dash="dash",
+        line_color="rgba(0,0,0,0.4)",
+        line_width=1,
+        row=4, col=1,
+    )
+
+    _add_regime_bands(fig, index, regimes, row=5)
 
     fig.update_layout(
-        height=820,
+        height=980,
         plot_bgcolor="white",
         paper_bgcolor="white",
         font=dict(family="Inter, sans-serif", size=12),
