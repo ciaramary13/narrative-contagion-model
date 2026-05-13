@@ -121,7 +121,7 @@ narrative-contagion-model/
 ## Setup
 
 ```bash
-git clone https://github.com/ciarawacker/narrative-contagion-model
+git clone https://github.com/ciaramary13/narrative-contagion-model
 cd narrative-contagion-model
 pip install -r requirements.txt
 streamlit run app.py
